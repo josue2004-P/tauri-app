@@ -17,10 +17,10 @@ export default function AuthLayout({
             <GridShape />
             <div className="flex flex-col items-center max-w-xs">
               <h2 className="text-6xl font-bold text-white mb-2 text-center">
-                Sistema de Tickets
+                Sistema de Laboratorio
               </h2>
               <p className="text-center text-gray-400 dark:text-white/60">
-                Gestión integral de requerimientos para Indheca y Tibernal
+                Gestión integral de analisis para Laboratorio Piedad
               </p>
             </div>
           </div>

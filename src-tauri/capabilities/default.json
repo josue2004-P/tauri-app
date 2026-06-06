@@ -7,14 +7,6 @@
   ],
   "permissions": [
     "core:default",
-    "opener:default",
-    "sql:allow-execute",
-    "sql:allow-select",
-    {
-      "identifier": "sql:allow-load",
-      "config": {
-        "db": "sqlite:datos.db"
-      }
-    }
+    "opener:default"
   ]
 }

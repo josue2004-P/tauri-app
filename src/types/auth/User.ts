@@ -1,14 +1,14 @@
 export interface User {
   id: number;
-  nombre: string;
-  apellido_paterno: string;
-  apellido_materno: string;
+  name: string;
+  // apellido_paterno: string;
+  // apellido_materno: string;
   email: string;
-  sistema: string;
-  perfiles: Perifles[];
+  // sistema: string;
+  perfil: Perfil[];
 }
 
-export interface Perifles{
+export interface Perfil{
   id: number;
   nombre: string;
 }

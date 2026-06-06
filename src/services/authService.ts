@@ -1,20 +1,33 @@
-import { axiosClient } from "../infrastructure/api/AxiosClient";
+import { invoke } from "@tauri-apps/api/core";
 import type{ LoginDto, LoginResponse } from "../types/auth";
-import Cookies from "js-cookie";
 
 export async function loginRequest(data: LoginDto): Promise<LoginResponse> {
-  const { data: response } = await axiosClient.post<LoginResponse>("/auth/login", data);
-  return response;
+  try {
+    const rustUser = await invoke<any>("login_user_command", {
+      email: data.email,
+      password: data.password,
+    });
+
+    return rustUser;
+
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function renewTokenRequest(): Promise<LoginResponse> {
-  const access_token = Cookies.get("access_token") || "";
+  const currentToken = localStorage.getItem("access_token") || "";
+  const authorizationHeader = `Bearer ${currentToken}`;
 
-  const { data } = await axiosClient.get<LoginResponse>("/auth/renew-token", {
-    headers: { 
-      "Authorization": `Bearer ${access_token}`
-     },
-  });
+  try {
+    const rustResponse = await invoke<any>("renew_token_command", {
+      authorization: authorizationHeader
+    });
 
-  return data;
+    return rustResponse;
+
+  } catch (error) {
+    localStorage.removeItem("access_token");
+    throw error;
+  }
 }

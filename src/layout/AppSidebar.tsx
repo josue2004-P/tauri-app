@@ -9,6 +9,7 @@ import {
   faEllipsisH 
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../hooks/useAuth";
@@ -31,7 +32,7 @@ const navItems: NavItem[] = [
   {
     icon: (
       <FontAwesomeIcon 
-        icon={faGauge} 
+        icon={faGauge as IconProp} 
         className="text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors w-5 h-5" 
       />
     ),
@@ -44,7 +45,7 @@ const navItems: NavItem[] = [
     perfil: ["usuario", "administrador"],
     icon: (
       <FontAwesomeIcon 
-        icon={faTicketAlt} 
+        icon={faTicketAlt as IconProp} 
         className="text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors w-5 h-5" 
       />
     ),
@@ -54,7 +55,7 @@ const navItems: NavItem[] = [
         path: "/tickets", 
         pro: false,
         perfil: ["administrador", "usuario"]
-      }, 
+      },    
       { 
         name: "Categorias", 
         path: "/categoria-tickets", 
@@ -72,12 +73,21 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
 
-  // Mapeo seguro de roles de usuario
   const userRoles = useMemo(() => {
-    if (!user || !user.perfiles) return [];
-    return user.perfiles.map(p => {
-      return p?.nombre ? String(p.nombre).toLowerCase().trim() : "";
-    }).filter(Boolean);
+    if (!user || !user.perfil) return [];
+
+    if (Array.isArray(user.perfil)) {
+      return user.perfil
+        .map((p) => (p?.nombre ? String(p.nombre).toLowerCase().trim() : ""))
+        .filter(Boolean);
+    }
+
+    const perfilObjeto = user.perfil as { nombre?: string };
+    if (perfilObjeto?.nombre) {
+      return [String(perfilObjeto.nombre).toLowerCase().trim()];
+    }
+
+    return [];
   }, [user]);
 
   const hasPermission = (allowedRoles?: string[]) => {
@@ -85,7 +95,6 @@ const AppSidebar: React.FC = () => {
     return allowedRoles.some(role => userRoles.includes(role.toLowerCase()));
   };
 
-  // Filtrado optimizado de rutas
   const filteredNavItems = useMemo(() => {
     return navItems
       .filter(item => hasPermission(item.perfil)) 
@@ -191,7 +200,7 @@ const AppSidebar: React.FC = () => {
                 
                 {(isExpanded || isHovered || isMobileOpen) && (
                   <FontAwesomeIcon 
-                    icon={faChevronDown} 
+                    icon={faChevronDown as IconProp} 
                     className={`ml-auto w-3 h-3 text-gray-400 transition-transform duration-200 ${
                       isSubmenuOpen ? "rotate-180 text-blue-600 dark:text-blue-400" : ""
                     }`}
@@ -301,7 +310,7 @@ const AppSidebar: React.FC = () => {
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Menu"
                 ) : (
-                  <FontAwesomeIcon icon={faEllipsisH} className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <FontAwesomeIcon icon={faEllipsisH as IconProp} className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                 )}
               </h2>
               {renderMenuItems(filteredNavItems, "main")}

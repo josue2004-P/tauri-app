@@ -77,7 +77,7 @@ export const useAuth = () => {
   }, [dispatch]);
 
   const startLogout = () => {
-    Cookies.remove("access_token");
+    localStorage.removeItem("access_token");
     dispatch(onLogout());
     navigate("/login");
   };
